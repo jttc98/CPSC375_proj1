@@ -2,7 +2,7 @@ library(tidyverse) #Needed to perform data tidying operations
 
 #First, read the csv files by using the read_csv() functions.
 #Then for each data, perform the data tidying operations so that the tables can be joined properly.
-Demographics <- read.csv("https://moodle-2020-2021.fullerton.edu/pluginfile.php/3153058/mod_assign/introattachment/0/demographics.csv")
+Demographics <- read_csv("C:/Users/johnt/Documents/Data Science/demographics.csv")
 Demographics <- Demographics %>% select(`Country Name`, `Series Code`, `YR2015`)
 Demographics <- Demographics %>% replace(is.na(.), 0) #Replace the NAs with the zeros.
 Demographics <- Demographics %>% select(`Country` = `Country Name`)
