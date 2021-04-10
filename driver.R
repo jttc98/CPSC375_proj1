@@ -2,9 +2,11 @@ library(tidyverse) #Needed to perform data tidying operations
 
 #First, read the csv files by using the read_csv() functions.
 #Then for each data, perform the data tidying operations so that the tables can be joined properly.
-Demographics <- read_csv("https://raw.githubusercontent.com/jttc98/CPSC375_proj1/main/demographics.csv")
+Demographics <- read.csv("https://moodle-2020-2021.fullerton.edu/pluginfile.php/3153058/mod_assign/introattachment/0/demographics.csv")
+Demographics <- Demographics %>% select(`Country Name`, `Series Code`, `YR2015`)
 Demographics <- Demographics %>% replace(is.na(.), 0) #Replace the NAs with the zeros.
-#Rename the countries' names with a more suitable one.
+Demographics <- Demographics %>% select(`Country` = `Country Name`)
+#Rename the countries' names to maintain the data consistency.
 Demographics <- Demographics %>% mutate(Country=replace(Country, Country=="Korea, Dem. People's Rep.", "South Korea"))
 Demographics <- Demographics %>% mutate(Country=replace(Country, Country=="Korea, Rep.", "South Korea"))
 Demographics <- Demographics %>% mutate(Country=replace(Country, Country=="Iran, Islamic Rep.", "Iran"))
