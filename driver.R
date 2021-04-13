@@ -24,3 +24,8 @@ Demographics <- Demographics %>% filter(Country != "United States")
 #Now combine all of the tables together into one whole main table.
 Demographics_AND_Beds <- Demographics %>% inner_join(Beds)
 #This main table will be the result obtained from data tidying and table joining.
+covid_confirmed <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+covid_confirmed <- covid_confirmed %>% select('Country' = `Country/Region`, 5:274)
+covid_confirmed <- covid_confirmed %>% mutate(Country=replace(Country, Country=="Korea, South", "South Korea"))
+covid_confirmed <- covid_confirmed %>% pivot_longer(-Country, names_to = "Days", values_to = "Deaths")
+Dem_Beds_Conf <- Demographics_AND_Beds %>% inner_join(covid_confirmed)
