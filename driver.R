@@ -1,17 +1,15 @@
 library(tidyverse) #Needed to perform data tidying operations
-
 #First, read the csv files by using the read_csv() functions.
 #Then for each data, perform the data tidying operations so that the tables can be joined properly.
 #Rename the countries' names to maintain the data consistency, and exclude the US from the tables.
-Beds <- read_csv("C:/Users/johnt/Documents/Data Science/beds.csv")
+Beds <- read_csv("C:/Users/johnt/Documents/Data Science/Beds.csv")
 Beds <- Beds %>% filter(Year == 2015)
 Beds <- Beds %>% filter(Country != "United States of America")
 Beds <- Beds %>% select(`Country`, `Number of Beds` = `Hospital beds (per 10 000 population)`)
 Beds <- Beds %>% mutate(Country = replace(Country, Country == "Republic of Korea", "South Korea"))
 Beds <- Beds %>% mutate(Country = replace(Country, Country == "Iran (Islamic Republic of)", "Iran"))
 Beds <- Beds %>% mutate(Country = replace(Country, Country == "United Kingdom of Great Britain and Northern Ireland", "United Kingdom"))
-
-Demographics <- read_csv("C:/Users/johnt/Documents/Data Science/demographics.csv")
+Demographics <- read_csv("C:/Users/johnt/Documents/Data Science/Demographics.csv")
 Demographics <- Demographics %>% select(`Country Name`, `Series Code`, `YR2015`)
 Demographics <- Demographics %>% pivot_wider(names_from = `Series Code`, values_from=`YR2015`)
 Demographics <- Demographics %>% replace(is.na(.), 0) #Replace the NAs with the zeros.
@@ -24,7 +22,6 @@ Demographics <- Demographics %>% mutate(Country=replace(Country, Country=="Korea
 Demographics <- Demographics %>% mutate(Country=replace(Country, Country=="Korea, Rep.", "South Korea"))
 Demographics <- Demographics %>% mutate(Country=replace(Country, Country=="Iran, Islamic Rep.", "Iran"))
 Demographics <- Demographics %>% filter(Country != "United States")
-
 #Now combine all of the tables together into one whole main table.
 Demographics_AND_Beds <- Demographics %>% inner_join(Beds)
 #This main table will be the result obtained from data tidying and table joining.
@@ -32,7 +29,12 @@ confirmed <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19
 confirmed <- confirmed %>% select('Country' = `Country/Region`, 5:274)
 confirmed <- confirmed %>% mutate(Country=replace(Country, Country=="Korea, South", "South Korea"))
 confirmed <- confirmed %>% filter(Country != "US")
-confirmed <- confirmed %>% pivot_longer(-Country, names_to = "Days", values_to = "Deaths")
+confirmed <- confirmed %>% pivot_longer(-Country, names_to = "Days", values_to = "Confirmed")
+deaths <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
+deaths <- deaths %>% select('Country' = `Country/Region`, 5:274)
+deaths <- deaths %>% mutate(Country=replace(Country, Country=="Korea, South", "South Korea"))
+deaths <- deaths %>% filter(Country != "US")
+deaths <- deaths %>% pivot_longer(-Country, names_to = "Days", values_to = "Deaths")            
+confirmed <- confirmed %>% inner_join(deaths)
 Dem_Beds_Conf <- Demographics_AND_Beds %>% inner_join(confirmed)
-
 write.csv(Dem_Beds_Conf, "C:/Users/johnt/Documents/Data Science/Dem_Beds_Conf.csv")
